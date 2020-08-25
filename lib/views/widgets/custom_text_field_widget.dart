@@ -7,13 +7,12 @@ class CustomTextField extends StatelessWidget {
   final bool obscureText;
   final TextInputType keyboardType;
 
-  CustomTextField({
-    @required this.controller,
-    @required this.labelText,
-    @required this.hintText,
-    @required this.obscureText,
-    this.keyboardType = TextInputType.text,
-  });
+  CustomTextField(
+      {@required this.controller,
+      @required this.labelText,
+      @required this.hintText,
+      @required this.obscureText,
+      this.keyboardType = TextInputType.text});
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +21,7 @@ class CustomTextField extends StatelessWidget {
       obscureText: obscureText,
       controller: controller,
       style: TextStyle(height: 1.5, fontFamily: "Roboto"),
+      keyboardType: keyboardType,
       decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 5),
           labelStyle: TextStyle(height: 1, fontFamily: "Roboto"),

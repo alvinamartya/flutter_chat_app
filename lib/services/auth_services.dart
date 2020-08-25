@@ -7,7 +7,7 @@ class AuthServices {
     try {
       var result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
-      var user = result.user;
+      FirebaseUser user = result.user;
       return user;
     } catch (e) {
       print(e.toString());
@@ -23,8 +23,8 @@ class AuthServices {
     try {
       AuthResult result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
-      FirebaseUser firebaseUser = result.user;
-      return firebaseUser;
+      FirebaseUser user = result.user;
+      return user;
     } catch (e) {
       print(e.toString());
       return null;

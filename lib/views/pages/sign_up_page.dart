@@ -1,18 +1,41 @@
-import 'package:chat_app/viewmodel/bloc/sign_up/sign_up_bloc.dart';
+import 'package:chat_app/models/response_model.dart';
+import 'package:chat_app/viewmodel/sign_up_view_model.dart';
+import 'package:chat_app/views/pages/home_page.dart';
+import 'package:chat_app/views/widgets/custom_dialog_widget.dart';
 import 'package:chat_app/views/widgets/custom_text_field_widget.dart';
 import 'package:chat_app/views/widgets/custome_button_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 
-class SignUp extends StatelessWidget {
+class SignUp extends StatefulWidget {
+  @override
+  _SignUpState createState() => _SignUpState();
+}
+
+class _SignUpState extends State<SignUp> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+  ProgressDialog pr;
 
-  Widget _getSignUpUi(SignUpBloc bloc) {
+  CustomDialog _getDismissDialog(String message) => CustomDialog(
+        context,
+        "Sign In",
+        message,
+        [
+          FlatButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text("OK"),
+          )
+        ],
+      );
+
+  Widget _getSignUpUi() {
     return ListView(
       children: [
         Column(
@@ -69,6 +92,7 @@ class SignUp extends StatelessWidget {
                       controller: _emailController,
                       labelText: "Email",
                       hintText: "Type your email",
+                      keyboardType: TextInputType.emailAddress,
                       obscureText: false),
                   SizedBox(
                     height: 20,
@@ -94,7 +118,50 @@ class SignUp extends StatelessWidget {
                       Expanded(
                         child: CustomButton(
                           isOutline: false,
-                          onPressed: () {},
+                          onPressed: () async {
+                            pr.show();
+                            if (_emailController.text == "")
+                              // email is empty
+                              _getDismissDialog("Email must be filled").show();
+                            else if (_nameController.text == "")
+                              // name is empty
+                              _getDismissDialog("Name must be filled").show();
+                            else if (_passwordController.text == "")
+                              // password is empty
+                              _getDismissDialog("Password must be filled")
+                                  .show();
+                            else if (_confirmPasswordController.text == "")
+                              // confirm password is empty
+                              _getDismissDialog(
+                                      "Confirm password must be filled")
+                                  .show();
+                            else if (_passwordController.text !=
+                                _confirmPasswordController.text)
+                              // password is not same with confirm password
+                              _getDismissDialog(
+                                  "Password and confirm password is not same");
+                            else {
+                              ResponseModel response =
+                                  await SignUpViewModel.signUp(
+                                      _emailController.text,
+                                      _passwordController.text,
+                                      _nameController.text);
+
+                              if (!response.success) {
+                                // failed
+                                pr.hide().then((value) {
+                                  _getDismissDialog(response.message);
+                                });
+                              } else {
+                                // success
+                                pr.hide().then((value) {
+                                  Get.off(HomePage(),
+                                      transition:
+                                          Transition.rightToLeftWithFade);
+                                });
+                              }
+                            }
+                          },
                           text: "Sign Up",
                         ),
                       )
@@ -111,27 +178,14 @@ class SignUp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SignUpBloc bloc = BlocProvider.of<SignUpBloc>(context);
+    pr = ProgressDialog(context);
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(0),
-        child: AppBar(
-          backgroundColor: Colors.black,
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(0),
+          child: AppBar(
+            backgroundColor: Colors.black,
+          ),
         ),
-      ),
-      body: BlocBuilder<SignUpBloc, SignUpState>(
-        builder: (context, state) {
-          if (state is SignUpResponseState) {
-            Stack(
-              children: [
-                _getSignUpUi(bloc),
-              ],
-            );
-          } else {
-            return _getSignUpUi(bloc);
-          }
-        },
-      ),
-    );
+        body: _getSignUpUi());
   }
 }

@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:chat_app/models/response_model.dart';
 import 'package:chat_app/viewmodel/sign_in_view_model.dart';
-import 'package:chat_app/views/pages/home_page.dart';
+import 'package:chat_app/views/pages/main_page.dart';
 import 'package:chat_app/views/widgets/custom_dialog_widget.dart';
 import 'package:chat_app/views/widgets/custom_text_field_widget.dart';
 import 'package:chat_app/views/widgets/custome_button_widget.dart';
@@ -104,9 +104,8 @@ class _SignInState extends State<SignIn> {
                             } else {
                               // success
                               pr.hide().then((value) {
-                                Get.Get.off(HomePage(),
-                                    transition:
-                                        Get.Transition.rightToLeftWithFade);
+                                Get.Get.off(MainPage(),
+                                    transition: Get.Transition.rightToLeft);
                               });
                             }
                           }
@@ -147,7 +146,7 @@ class _SignInState extends State<SignIn> {
                         isOutline: true,
                         onPressed: () {
                           Get.Get.to(SignUp(),
-                              transition: Get.Transition.rightToLeftWithFade);
+                              transition: Get.Transition.rightToLeft);
                           _emailController.clear();
                           _passwordController.clear();
                         },

@@ -1,6 +1,6 @@
 import 'package:chat_app/models/response_model.dart';
 import 'package:chat_app/viewmodel/sign_up_view_model.dart';
-import 'package:chat_app/views/pages/home_page.dart';
+import 'package:chat_app/views/pages/main_page.dart';
 import 'package:chat_app/views/widgets/custom_dialog_widget.dart';
 import 'package:chat_app/views/widgets/custom_text_field_widget.dart';
 import 'package:chat_app/views/widgets/custome_button_widget.dart';
@@ -23,7 +23,7 @@ class _SignUpState extends State<SignUp> {
 
   CustomDialog _getDismissDialog(String message) => CustomDialog(
         context,
-        "Sign In",
+        "Sign Up",
         message,
         [
           FlatButton(
@@ -119,7 +119,6 @@ class _SignUpState extends State<SignUp> {
                         child: CustomButton(
                           isOutline: false,
                           onPressed: () async {
-                            pr.show();
                             if (_emailController.text == "")
                               // email is empty
                               _getDismissDialog("Email must be filled").show();
@@ -141,6 +140,7 @@ class _SignUpState extends State<SignUp> {
                               _getDismissDialog(
                                   "Password and confirm password is not same");
                             else {
+                              pr.show();
                               ResponseModel response =
                                   await SignUpViewModel.signUp(
                                       _emailController.text,
@@ -155,7 +155,7 @@ class _SignUpState extends State<SignUp> {
                               } else {
                                 // success
                                 pr.hide().then((value) {
-                                  Get.off(HomePage(),
+                                  Get.off(MainPage(),
                                       transition:
                                           Transition.rightToLeftWithFade);
                                 });

@@ -2,12 +2,12 @@ import 'package:chat_app/views/pages/account_page.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class HomePage extends StatefulWidget {
+class MainPage extends StatefulWidget {
   @override
-  _HomePageState createState() => _HomePageState();
+  _MainPageState createState() => _MainPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _MainPageState extends State<MainPage> {
   int _currentIndex = 0;
 
   Future<SharedPreferences> _getSharedPreference() async =>

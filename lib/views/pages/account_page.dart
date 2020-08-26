@@ -1,23 +1,50 @@
 import 'dart:io';
 
+import 'package:chat_app/utils/shared_preferences.dart';
+import 'package:chat_app/viewmodel/account_view_model.dart';
+import 'package:chat_app/viewmodel/bloc/user_image/user_image_bloc.dart';
+import 'package:chat_app/viewmodel/services/user_services.dart';
+import 'package:chat_app/views/pages/sign_in_page.dart';
 import 'package:chat_app/views/widgets/custom_flat_icon_circle.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart' as Get;
 import 'package:image_picker/image_picker.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 
+// ignore: must_be_immutable
 class AccountPage extends StatelessWidget {
   final String name;
   final String imageUrl;
   final Color _signOutColor = Color(0xFFFFBFBF);
   final Color _signOutTextColor = Color(0xFFEE7A7A);
+  ProgressDialog pr;
+
+  Widget _getImageUser(String imageUrl) => Container(
+        margin: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(125),
+          image: DecorationImage(
+            image: imageUrl == null
+                ? AssetImage("assets/person.png")
+                : NetworkImage(imageUrl),
+            fit: BoxFit.cover,
+          ),
+        ),
+      );
 
   AccountPage(this.name, this.imageUrl);
 
   Future<PickedFile> _getImage() async {
-    return await ImagePicker().getImage(source: ImageSource.gallery);
+    return await ImagePicker()
+        .getImage(source: ImageSource.gallery); // pick image from gallery
   }
 
   @override
   Widget build(BuildContext context) {
+    // ignore: close_sinks
+    UserImageBloc bloc = BlocProvider.of<UserImageBloc>(context);
+    pr = ProgressDialog(context);
     return Container(
       padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
       child: SizedBox.expand(
@@ -39,21 +66,40 @@ class AccountPage extends StatelessWidget {
                 Stack(
                   children: [
                     SizedBox(
-                      width: 200,
-                      height: 200,
-                      child: CircleAvatar(
-                        radius: 20,
-                        backgroundColor: Colors.grey[400],
-                        backgroundImage: AssetImage("assets/person.png"),
+                      width: 250,
+                      height: 250,
+                      child: BlocBuilder<UserImageBloc, UserImageState>(
+                        builder: (context, state) {
+                          if (state is UserImageLoaded) {
+                            return _getImageUser(state.imagePath);
+                          } else {
+                            return _getImageUser(null);
+                          }
+                        },
                       ),
                     ),
                     Positioned(
-                      bottom: 0,
-                      right: 26,
+                      bottom: 10,
+                      right: 40,
                       child: GestureDetector(
                         onTap: () async {
-                          PickedFile pickedFile = await _getImage();
-                          // File file = File(pickedFile.path);
+                          String email = await Preferences.getEmail();
+                          try {
+                            PickedFile pickedFile =
+                                await _getImage(); // get picked file
+                            File file = File(pickedFile.path); // get file
+                            pr.show();
+                            String imagePath = await UserServices.uploadImage(
+                                file, email); // upload image to database
+                            Preferences.setImage(
+                                imagePath); // save image to preferences
+                            bloc.add(UserImageUploadEvent(imagePath));
+                          } catch (e) {
+                            print(e.toString());
+                            bloc.add(UserImageLoadedEvent());
+                          } finally {
+                            pr.hide();
+                          }
                         },
                         child: CustomFlatIconCircle(
                           Colors.black,
@@ -91,7 +137,10 @@ class AccountPage extends StatelessWidget {
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               padding: EdgeInsets.all(0),
               child: FlatButton(
-                onPressed: () {},
+                onPressed: () async {
+                  await AccountViewModel.signOut();
+                  Get.Get.off(SignIn(), transition: Get.Transition.leftToRight);
+                },
                 child: Container(
                   child: Row(
                     children: [

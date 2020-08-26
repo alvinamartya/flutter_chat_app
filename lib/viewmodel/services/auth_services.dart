@@ -6,8 +6,8 @@ class AuthServices {
   static Future<FirebaseUser> signIn(String email, String password) async {
     try {
       var result = await _auth.signInWithEmailAndPassword(
-          email: email, password: password);
-      FirebaseUser user = result.user;
+          email: email, password: password); // sign in with firebase auth
+      FirebaseUser user = result.user; // get user
       return user;
     } catch (e) {
       print(e.toString());
@@ -22,8 +22,8 @@ class AuthServices {
   static Future<FirebaseUser> signUp(String email, String password) async {
     try {
       AuthResult result = await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
-      FirebaseUser user = result.user;
+          email: email, password: password); // create new firebase auth
+      FirebaseUser user = result.user; // get user
       return user;
     } catch (e) {
       print(e.toString());

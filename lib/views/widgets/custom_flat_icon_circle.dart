@@ -8,6 +8,7 @@ class CustomFlatIconCircle extends StatelessWidget {
   final double sizeIcon;
   final Color color;
   final Border border;
+
   CustomFlatIconCircle(this.color, this.backgroundColor, this.icon, this.width,
       this.height, this.sizeIcon,
       {this.border});

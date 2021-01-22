@@ -8,10 +8,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // get login state
   SharedPreferences pref = await SharedPreferences.getInstance();
-  runApp(MyApp(
-    pref.getBool("login"),
-  ));
+  bool loginState =
+      pref.getBool("login") == null ? false : pref.getBool("login");
+
+  // run app
+  runApp(MyApp(loginState));
 }
 
 class MyApp extends StatelessWidget {

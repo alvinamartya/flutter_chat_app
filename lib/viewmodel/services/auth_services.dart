@@ -1,3 +1,5 @@
+import 'package:chat_app/models/auth_signin_model.dart';
+import 'package:chat_app/utils/firabase_error.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthServices {
@@ -10,7 +12,7 @@ class AuthServices {
       FirebaseUser user = result.user; // get user
       return user;
     } catch (e) {
-      print(e.toString());
+      print(e);
       return null;
     }
   }
@@ -19,15 +21,14 @@ class AuthServices {
     _auth.signOut();
   }
 
-  static Future<FirebaseUser> signUp(String email, String password) async {
+  static Future<AuthSignInModel> signUp(String email, String password) async {
     try {
       AuthResult result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password); // create new firebase auth
       FirebaseUser user = result.user; // get user
-      return user;
+      return AuthSignInModel(true, "success", user);
     } catch (e) {
-      print(e.toString());
-      return null;
+      return AuthSignInModel(false, FirebaseError.show(e.code), null);
     }
   }
 }

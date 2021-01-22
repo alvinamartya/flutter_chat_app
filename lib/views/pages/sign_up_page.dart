@@ -150,7 +150,8 @@ class _SignUpState extends State<SignUp> {
                               if (!response.success) {
                                 // failed
                                 pr.hide().then((value) {
-                                  _getDismissDialog(response.message);
+                                  print("show error message");
+                                  _getDismissDialog(response.message).show();
                                 });
                               } else {
                                 // success

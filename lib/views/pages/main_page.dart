@@ -32,10 +32,8 @@ class _MainPageState extends State<MainPage> {
               ),
         bottomNavigationBar: BottomNavigationBar(
           items: [
-            BottomNavigationBarItem(
-                icon: Icon(Icons.home), title: Text("Home")),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.person), title: Text("Account")),
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: "Account"),
           ],
           onTap: (index) {
             _currentIndex = index;
